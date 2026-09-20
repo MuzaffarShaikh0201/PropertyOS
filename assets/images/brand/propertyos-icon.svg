@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="PropertyOS icon">
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#1F7A6E"/>
+  <path d="M256,178 L150,372 L362,372 Z" fill="none" stroke="#FFFFFF" stroke-width="40" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M256,372 L256,320" fill="none" stroke="#FFFFFF" stroke-width="40" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72" width="320" height="72" role="img" aria-label="PropertyOS logo">
+  <rect x="0" y="0" width="72" height="72" rx="16" fill="#1F7A6E"/>
+  <path d="M36,25 L21,52 L51,52 Z" fill="none" stroke="#FFFFFF" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M36,52 L36,45" fill="none" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+  <text x="88" y="47" font-family="Manrope, 'Public Sans', -apple-system, sans-serif" font-weight="800" font-size="34" letter-spacing="-0.5" fill="#1B2020">PropertyOS</text>
+</svg>

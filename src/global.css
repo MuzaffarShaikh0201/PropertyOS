@@ -1,9 +1,56 @@
-:root {
-  --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-    Segoe UI Symbol, Noto Color Emoji;
-  --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
-  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
-  --font-serif: Georgia, 'Times New Roman', serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PropertyOS design tokens — source of truth: wireframe screen 00 (approved). */
+@layer base {
+  :root {
+    --color-bg: 246 247 247;
+    --color-surface: 255 255 255;
+    --color-surface-2: 240 242 242;
+    --color-border: 218 222 222;
+    --color-border-strong: 27 32 32;
+    --color-text: 27 32 32;
+    --color-text-muted: 91 99 99;
+    --color-text-faint: 139 148 148;
+
+    --color-primary: 31 122 110;
+    --color-primary-hover: 23 100 90;
+    --color-primary-pressed: 18 79 71;
+    --color-on-primary: 255 255 255;
+
+    --color-success-fg: 30 123 77;
+    --color-success-bg: 228 243 234;
+    --color-warning-fg: 146 101 10;
+    --color-warning-bg: 251 240 217;
+    --color-danger-fg: 162 59 46;
+    --color-danger-bg: 251 228 224;
+    --color-info-fg: 31 122 110;
+    --color-info-bg: 227 241 238;
+  }
+
+  .dark:root {
+    --color-bg: 20 24 26;
+    --color-surface: 28 33 36;
+    --color-surface-2: 36 42 45;
+    --color-border: 51 59 62;
+    --color-border-strong: 74 84 87;
+    --color-text: 237 239 239;
+    --color-text-muted: 154 163 163;
+    --color-text-faint: 107 117 118;
+
+    --color-primary: 63 163 150;
+    --color-primary-hover: 86 181 168;
+    --color-primary-pressed: 44 132 120;
+    --color-on-primary: 12 18 16;
+
+    --color-success-fg: 111 215 154;
+    --color-success-bg: 22 52 37;
+    --color-warning-fg: 232 184 84;
+    --color-warning-bg: 58 44 16;
+    --color-danger-fg: 240 138 117;
+    --color-danger-bg: 59 23 18;
+    --color-info-fg: 95 194 178;
+    --color-info-bg: 22 48 44;
+  }
 }
