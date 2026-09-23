@@ -17,6 +17,7 @@ import { AGREEMENT_DOC_TYPES, type AgreementDocType, type AgreementDocuments } f
 import { useLegalConfig } from '@/features/legal-content/hooks';
 import { useOwner } from '@/features/owners/hooks';
 import { useProperty } from '@/features/properties/hooks';
+import { ensurePeriodsGenerated } from '@/features/rent-ledger/api';
 import { useTenant } from '@/features/tenants/hooks';
 
 const ACCEPTED_DOCUMENT_TYPES = [
@@ -115,6 +116,8 @@ export default function NewAgreementStep3Screen() {
         stampDutyEstimate: stampDuty,
         previousAgreementId: draft.previousAgreementId,
       });
+
+      await ensurePeriodsGenerated(agreement);
 
       const documentEntries = Object.entries(draft.pickedDocuments) as [
         AgreementDocType,

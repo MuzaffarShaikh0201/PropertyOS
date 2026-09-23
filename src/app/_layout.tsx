@@ -97,6 +97,7 @@ function RootNavigator() {
           <Stack.Screen name="agreements/[id]" />
           <Stack.Screen name="agreements/[id]/give-notice" options={{ presentation: 'modal' }} />
           <Stack.Screen name="bills/new" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="bills/[id]" />
           <Stack.Screen name="legal-config" />
           <Stack.Screen name="settings" />
           <Stack.Screen name="about" />

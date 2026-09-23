@@ -7,14 +7,30 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ContentColumn } from '@/components/layout/content-column';
 import { Banner } from '@/components/ui/banner';
-import { computeRegistrationDeadline, daysUntil } from '@/features/agreements/calculations';
+import { Chip } from '@/components/ui/chip';
+import { computeRegistrationDeadline, daysUntil, formatInr } from '@/features/agreements/calculations';
 import { useUnregisteredAgreements } from '@/features/agreements/hooks';
 import { useProperties } from '@/features/properties/hooks';
+import { useUpcomingRentDue } from '@/features/rent-ledger/hooks';
+import { getLedgerDisplayStatus, LEDGER_STATUS_LABELS } from '@/features/rent-ledger/lifecycle';
+import { useUtilityBills } from '@/features/utility-bills/hooks';
+import { getBillDisplayStatus, BILL_STATUS_LABELS } from '@/features/utility-bills/lifecycle';
+import { billTypeLabel } from '@/features/utility-bills/types';
 import { useAuth } from '@/lib/auth';
 
 const MUTED_ICON_COLOR = { light: '#5B6363', dark: '#9AA3A3' };
 const ATTENTION_WINDOW_DAYS = 30;
 const MAX_DEADLINE_ROWS = 5;
+const UPCOMING_RENT_WINDOW_DAYS = 31;
+const MAX_BILL_ROWS = 5;
+
+const STATUS_CHIP_VARIANT: Record<string, 'success' | 'warning' | 'error' | 'neutral'> = {
+  paid: 'success',
+  partial: 'warning',
+  late: 'error',
+  overdue: 'error',
+  unpaid: 'neutral',
+};
 
 function readMetadataString(metadata: Record<string, unknown> | undefined, key: string): string {
   const value = metadata?.[key];
@@ -43,6 +59,8 @@ export default function DashboardScreen() {
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
   const { data: properties, isLoading: propertiesLoading } = useProperties();
   const { data: unregisteredAgreements, isLoading: agreementsLoading } = useUnregisteredAgreements();
+  const { data: upcomingRent } = useUpcomingRentDue(UPCOMING_RENT_WINDOW_DAYS);
+  const { data: utilityBills } = useUtilityBills();
 
   const firstName = readMetadataString(session?.user.user_metadata, 'first_name');
   const initial = firstName ? firstName[0].toUpperCase() : '?';
@@ -72,6 +90,19 @@ export default function DashboardScreen() {
   }, [unregisteredAgreements, propertyNameById]);
 
   const attentionItem = deadlines.find((item) => item.daysLeft <= ATTENTION_WINDOW_DAYS) ?? null;
+
+  const billsDue = useMemo(() => {
+    if (!utilityBills) return [];
+    return utilityBills
+      .filter((bill) => bill.status !== 'paid')
+      .map((bill) => ({
+        bill,
+        propertyName: propertyNameById.get(bill.propertyId) ?? 'Property',
+        displayStatus: getBillDisplayStatus(bill),
+      }))
+      .sort((a, b) => a.bill.dueDate.localeCompare(b.bill.dueDate))
+      .slice(0, MAX_BILL_ROWS);
+  }, [utilityBills, propertyNameById]);
 
   const isLoading = propertiesLoading || agreementsLoading;
   const totalProperties = properties?.length ?? 0;
@@ -193,6 +224,61 @@ export default function DashboardScreen() {
                       {index < Math.min(deadlines.length, MAX_DEADLINE_ROWS) - 1 ? (
                         <View className="h-px bg-border" />
                       ) : null}
+                    </View>
+                  ))}
+                </View>
+              </View>
+            ) : null}
+
+            {upcomingRent && upcomingRent.length > 0 ? (
+              <View className="gap-1.5">
+                <Text className="font-body-bold text-[12px] text-text-muted">Upcoming rent</Text>
+                <View className="rounded-md border border-border bg-surface px-3.5">
+                  {upcomingRent.map(({ entry, propertyName }, index) => {
+                    const displayStatus = getLedgerDisplayStatus(entry);
+                    return (
+                      <View key={entry.id}>
+                        <Pressable
+                          onPress={() => router.push(`/agreements/${entry.agreementId}`)}
+                          accessibilityRole="button"
+                          className="flex-row items-center justify-between py-3">
+                          <View className="flex-1 pr-3">
+                            <Text className="font-body-bold text-[13px] text-text">{propertyName}</Text>
+                            <Text className="font-body text-[12px] text-text-muted">
+                              {entry.periodStart} · {formatInr(entry.amountDue)}
+                            </Text>
+                          </View>
+                          <Chip variant={STATUS_CHIP_VARIANT[displayStatus]}>{LEDGER_STATUS_LABELS[displayStatus]}</Chip>
+                        </Pressable>
+                        {index < upcomingRent.length - 1 ? <View className="h-px bg-border" /> : null}
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
+
+            {billsDue.length > 0 ? (
+              <View className="gap-1.5">
+                <Text className="font-body-bold text-[12px] text-text-muted">Utility bills due</Text>
+                <View className="rounded-md border border-border bg-surface px-3.5">
+                  {billsDue.map(({ bill, propertyName, displayStatus }, index) => (
+                    <View key={bill.id}>
+                      <Pressable
+                        onPress={() => router.push({ pathname: '/bills/[id]', params: { id: bill.id } })}
+                        accessibilityRole="button"
+                        className="flex-row items-center justify-between py-3">
+                        <View className="flex-1 pr-3">
+                          <Text className="font-body-bold text-[13px] text-text">
+                            {propertyName} · {billTypeLabel(bill.billType)}
+                          </Text>
+                          <Text className="font-body text-[12px] text-text-muted">
+                            Due {bill.dueDate} · {formatInr(bill.amount)}
+                          </Text>
+                        </View>
+                        <Chip variant={STATUS_CHIP_VARIANT[displayStatus]}>{BILL_STATUS_LABELS[displayStatus]}</Chip>
+                      </Pressable>
+                      {index < billsDue.length - 1 ? <View className="h-px bg-border" /> : null}
                     </View>
                   ))}
                 </View>
