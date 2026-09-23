@@ -14,13 +14,13 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
-import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { ToastProvider } from '@/components/ui/toast';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { queryClient } from '@/lib/query-client';
+import { useThemePreference } from '@/lib/theme-preference';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,14 +58,14 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { colorScheme } = useColorScheme();
+  const { colorScheme, isLoaded: isThemeLoaded } = useThemePreference();
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && isThemeLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [isLoading]);
+  }, [isLoading, isThemeLoaded]);
 
   // Both the status bar and Android's navigation bar are edge-to-edge and
   // transparent by default — what shows through them is the root window's
@@ -74,7 +74,7 @@ function RootNavigator() {
     SystemUI.setBackgroundColorAsync(BG_COLOR[colorScheme === 'dark' ? 'dark' : 'light']);
   }, [colorScheme]);
 
-  if (isLoading) {
+  if (isLoading || !isThemeLoaded) {
     return null;
   }
 
@@ -90,6 +90,7 @@ function RootNavigator() {
           <Stack.Screen name="owners/[id]" />
           <Stack.Screen name="properties/new" options={{ presentation: 'modal' }} />
           <Stack.Screen name="tenants/new" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="tenants/[id]" />
           <Stack.Screen name="agreements/new/step1" options={{ presentation: 'modal' }} />
           <Stack.Screen name="agreements/new/step2" options={{ presentation: 'modal' }} />
           <Stack.Screen name="agreements/new/step3" options={{ presentation: 'modal' }} />
@@ -97,11 +98,17 @@ function RootNavigator() {
           <Stack.Screen name="agreements/[id]/give-notice" options={{ presentation: 'modal' }} />
           <Stack.Screen name="bills/new" options={{ presentation: 'modal' }} />
           <Stack.Screen name="legal-config" />
+          <Stack.Screen name="settings" />
+          <Stack.Screen name="about" />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="change-password" />
         </Stack.Protected>
         <Stack.Protected guard={!isAuthenticated}>
           <Stack.Screen name="login" />
           <Stack.Screen name="signup" />
         </Stack.Protected>
+        <Stack.Screen name="terms" />
+        <Stack.Screen name="privacy" />
       </Stack>
     </ThemeProvider>
   );

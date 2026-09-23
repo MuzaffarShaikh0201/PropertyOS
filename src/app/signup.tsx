@@ -1,8 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useColorScheme } from 'nativewind';
-import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { Pressable, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,6 +12,7 @@ import { TextField } from '@/components/form/text-field';
 import { Banner } from '@/components/ui/banner';
 import { useToast } from '@/components/ui/toast';
 import { useAuth } from '@/lib/auth';
+import { useThemePreference } from '@/lib/theme-preference';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -20,7 +20,7 @@ type ErrorState = { kind: 'has-account' | 'error'; message: string } | null;
 
 export default function SignUpScreen() {
   const { signUp, checkEmailExists } = useAuth();
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme, setPreference } = useThemePreference();
   const params = useLocalSearchParams<{ email?: string }>();
   const toast = useToast();
 
@@ -31,6 +31,10 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<ErrorState>(null);
+  const lastNameRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
 
   const normalizedEmail = email.trim().toLowerCase();
   const isNameValid = firstName.trim().length > 0 && lastName.trim().length > 0;
@@ -71,7 +75,7 @@ export default function SignUpScreen() {
   return (
     <SafeAreaView className="flex-1 bg-bg">
       <Pressable
-        onPress={toggleColorScheme}
+        onPress={() => setPreference(colorScheme === 'dark' ? 'light' : 'dark')}
         accessibilityRole="button"
         accessibilityLabel={colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
         className="absolute right-4 top-4 z-10 h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface active:bg-surface-2">
@@ -109,11 +113,15 @@ export default function SignUpScreen() {
                     }}
                     placeholder="Asha"
                     accessibilityLabel="First name"
+                    returnKeyType="next"
+                    onSubmitEditing={() => lastNameRef.current?.focus()}
+                    blurOnSubmit={false}
                   />
                 </View>
                 <View className="flex-1 gap-1.5">
                   <Text className="font-body-bold text-[12px] text-text-muted">Last name</Text>
                   <TextField
+                    ref={lastNameRef}
                     value={lastName}
                     onChangeText={(text) => {
                       setLastName(text);
@@ -121,6 +129,9 @@ export default function SignUpScreen() {
                     }}
                     placeholder="Rao"
                     accessibilityLabel="Last name"
+                    returnKeyType="next"
+                    onSubmitEditing={() => emailRef.current?.focus()}
+                    blurOnSubmit={false}
                   />
                 </View>
               </View>
@@ -128,6 +139,7 @@ export default function SignUpScreen() {
               <View className="gap-1.5">
                 <Text className="font-body-bold text-[12px] text-text-muted">Email address</Text>
                 <TextField
+                  ref={emailRef}
                   value={email}
                   onChangeText={(text) => {
                     setEmail(text);
@@ -138,12 +150,16 @@ export default function SignUpScreen() {
                   autoCapitalize="none"
                   autoCorrect={false}
                   accessibilityLabel="Email address"
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  blurOnSubmit={false}
                 />
               </View>
 
               <View className="gap-1.5">
                 <Text className="font-body-bold text-[12px] text-text-muted">Password</Text>
                 <PasswordInput
+                  ref={passwordRef}
                   value={password}
                   onChangeText={(text) => {
                     setPassword(text);
@@ -151,6 +167,9 @@ export default function SignUpScreen() {
                   }}
                   placeholder="Create a password"
                   accessibilityLabel="Password"
+                  returnKeyType="next"
+                  onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+                  blurOnSubmit={false}
                 />
                 {password.length > 0 ? <PasswordRequirements password={password} /> : null}
               </View>
@@ -158,6 +177,7 @@ export default function SignUpScreen() {
               <View className="gap-1.5">
                 <Text className="font-body-bold text-[12px] text-text-muted">Confirm password</Text>
                 <PasswordInput
+                  ref={confirmPasswordRef}
                   value={confirmPassword}
                   onChangeText={(text) => {
                     setConfirmPassword(text);
@@ -165,6 +185,8 @@ export default function SignUpScreen() {
                   }}
                   placeholder="Re-enter your password"
                   accessibilityLabel="Confirm password"
+                  returnKeyType="go"
+                  onSubmitEditing={handleSignUp}
                 />
                 {confirmPassword.length > 0 && !doPasswordsMatch ? (
                   <Text className="font-body text-[12px] text-danger-fg">Passwords don&apos;t match.</Text>
@@ -205,6 +227,18 @@ export default function SignUpScreen() {
                 </Pressable>
               </View>
             </View>
+
+            <Text className="max-w-[280px] text-center font-body text-[11px] leading-4 text-text-muted">
+              By continuing you agree to the{' '}
+              <Text onPress={() => router.push('/terms')} className="font-body-bold text-primary">
+                Terms of Service
+              </Text>{' '}
+              and{' '}
+              <Text onPress={() => router.push('/privacy')} className="font-body-bold text-primary">
+                Privacy Policy
+              </Text>
+              .
+            </Text>
           </View>
         </View>
       </KeyboardAwareScrollView>

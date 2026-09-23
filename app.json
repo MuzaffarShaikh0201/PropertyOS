@@ -35,7 +35,14 @@
         {
           "enforceContrast": false
         }
-      ]
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "PropertyOS needs access to your photos so you can add a picture of a property."
+        }
+      ],
+      "expo-document-picker"
     ],
     "experiments": {
       "typedRoutes": true,

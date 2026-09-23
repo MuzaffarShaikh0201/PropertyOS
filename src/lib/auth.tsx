@@ -10,6 +10,15 @@ type SignUpParams = {
   password: string;
 };
 
+type ProfileInput = {
+  firstName: string;
+  lastName: string;
+  /** E.164-ish, e.g. "+919876543210" — or null to clear it. Not verified via
+   * SMS: there's no phone-auth provider configured, this is plain profile
+   * metadata, not Supabase Auth's native phone field. */
+  phone: string | null;
+};
+
 type AuthContextValue = {
   session: Session | null;
   isAuthenticated: boolean;
@@ -21,6 +30,8 @@ type AuthContextValue = {
   signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (params: SignUpParams) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  updateProfile: (input: ProfileInput) => Promise<{ error: string | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -73,6 +84,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
       },
       signOut: async () => {
         await supabase.auth.signOut();
+      },
+      updateProfile: async ({ firstName, lastName, phone }) => {
+        const { error } = await supabase.auth.updateUser({
+          data: { first_name: firstName, last_name: lastName, phone },
+        });
+        return { error: error?.message ?? null };
+      },
+      updatePassword: async (newPassword) => {
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        return { error: error?.message ?? null };
       },
     }),
     [session, isLoading],

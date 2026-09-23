@@ -1,0 +1,21 @@
+{
+  "version": "2026.1",
+  "state": "Maharashtra",
+  "lastUpdated": "2026-09-12",
+  "registration": {
+    "summary": "Mandatory for every Leave & License agreement, regardless of duration — including 11-month terms.",
+    "windowMonths": 4,
+    "dutyOn": "licensor",
+    "nonRegistrationRisk": "Non-registration risks inadmissibility as evidence and a fine up to ₹5,000."
+  },
+  "maxTenureMonths": 60,
+  "stampDuty": {
+    "formula": "0.25% of total rent over the license period + 0.25% of a notional 10% p.a. interest on the refundable deposit"
+  },
+  "witnessesRequired": 2,
+  "policeVerification": {
+    "summary": "Recommended, not system-enforced.",
+    "note": "Online verification is available via the Maharashtra Police citizen portal."
+  },
+  "disclaimer": "This is guidance, not legal advice. Review against the current Maharashtra Rent Control Act, 1999 and any amendments, or a qualified legal professional, before relying on it."
+}

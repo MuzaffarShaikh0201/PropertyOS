@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from 'nativewind';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { Pressable, TextInput, View, type TextInputProps } from 'react-native';
 
 const ICON_COLOR = { light: '#5B6363', dark: '#9AA3A3' };
@@ -9,7 +9,10 @@ type PasswordInputProps = Omit<TextInputProps, 'secureTextEntry'> & {
   accessibilityLabel: string;
 };
 
-export function PasswordInput({ accessibilityLabel, onFocus, onBlur, ...props }: PasswordInputProps) {
+export const PasswordInput = forwardRef<TextInput, PasswordInputProps>(function PasswordInput(
+  { accessibilityLabel, onFocus, onBlur, ...props },
+  ref
+) {
   const [visible, setVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const { colorScheme } = useColorScheme();
@@ -22,6 +25,7 @@ export function PasswordInput({ accessibilityLabel, onFocus, onBlur, ...props }:
       }`}>
       <TextInput
         {...props}
+        ref={ref}
         secureTextEntry={!visible}
         autoCapitalize="none"
         autoCorrect={false}
@@ -46,4 +50,4 @@ export function PasswordInput({ accessibilityLabel, onFocus, onBlur, ...props }:
       </Pressable>
     </View>
   );
-}
+});

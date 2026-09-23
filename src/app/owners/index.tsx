@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ContentColumn } from '@/components/layout/content-column';
 import { ScreenHeader } from '@/components/nav/screen-header';
 import { Banner } from '@/components/ui/banner';
 import { Chip } from '@/components/ui/chip';
@@ -42,8 +43,10 @@ export default function OwnerProfilesScreen() {
         }
       />
 
-      <ScrollView className="flex-1 px-4" contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="gap-3 py-4">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', paddingHorizontal: 16 }}>
+        <ContentColumn className="flex-1 gap-3 py-4">
           <View className="flex-row items-center gap-2 rounded-pill border border-border bg-surface px-3.5 py-2.5">
             <Ionicons name="search" size={16} color={MUTED_ICON_COLOR[scheme]} />
             <TextInput
@@ -112,7 +115,7 @@ export default function OwnerProfilesScreen() {
               profile as Licensor.
             </Text>
           </Banner>
-        </View>
+        </ContentColumn>
       </ScrollView>
     </SafeAreaView>
   );

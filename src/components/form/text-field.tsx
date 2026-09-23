@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { TextInput, type TextInputProps } from 'react-native';
 
 type TextFieldProps = TextInputProps & {
@@ -8,12 +8,16 @@ type TextFieldProps = TextInputProps & {
 // Suppresses the browser's default focus outline (`outline-none`) and
 // replaces it with our own border-primary treatment, matching the approved
 // `.wf-input:focus` style from the wireframe instead of a stray black ring.
-export function TextField({ accessibilityLabel, onFocus, onBlur, ...props }: TextFieldProps) {
+export const TextField = forwardRef<TextInput, TextFieldProps>(function TextField(
+  { accessibilityLabel, onFocus, onBlur, ...props },
+  ref
+) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <TextInput
       {...props}
+      ref={ref}
       accessibilityLabel={accessibilityLabel}
       placeholderTextColor={props.placeholderTextColor ?? '#8B9494'}
       onFocus={(event) => {
@@ -29,4 +33,4 @@ export function TextField({ accessibilityLabel, onFocus, onBlur, ...props }: Tex
       }`}
     />
   );
-}
+});

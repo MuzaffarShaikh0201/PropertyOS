@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { TextField } from '@/components/form/text-field';
+import { ContentColumn } from '@/components/layout/content-column';
 import { Banner } from '@/components/ui/banner';
 import { isValidAadhaar, isValidPan } from '@/lib/format';
 
@@ -59,8 +60,8 @@ export function OwnerForm({ initialValues, submitLabel, submittingLabel, onSubmi
     <KeyboardAwareScrollView
       bottomOffset={24}
       keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{ flexGrow: 1 }}>
-      <View className="gap-4 px-4 py-4">
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}>
+      <ContentColumn className="gap-4 px-4 py-4">
         <View className="gap-1.5">
           <Text className="font-body-bold text-[12px] text-text-muted">Name</Text>
           <TextField value={name} onChangeText={setName} placeholder="Full name" accessibilityLabel="Name" />
@@ -162,7 +163,7 @@ export function OwnerForm({ initialValues, submitLabel, submittingLabel, onSubmi
             {submitting ? submittingLabel : submitLabel}
           </Text>
         </Pressable>
-      </View>
+      </ContentColumn>
     </KeyboardAwareScrollView>
   );
 }
